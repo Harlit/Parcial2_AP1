@@ -1,0 +1,46 @@
+@page "/Vitamina_consulta"
+@inject VitaminasBLL vitaminasBLL
+
+<EditForm Model="this">
+    <div class="card">
+
+        <div class="card-header">
+            <h4>Consulta de Vitaminas</h4>
+        </div>
+    </div>
+    <div class="card-body">           
+     <button @onclick="Buscar" class="btn btn-outline-primary" > <i class="oi oi-magnifying-glass"/> Buscar </button>
+     </div>
+
+    <table>
+
+        <thead class="thead">
+            <tr class="table">
+                <th>VitaminaId</th>
+                <th>Nombre</th>
+                <th>Existencia</th>
+                <th>Unidad de medida</th>
+            </tr>
+        </thead>
+        <tbody>
+           @foreach (var vitamina in vitaminas)
+            {
+                <tr>
+                    <td>@vitamina.VitaminaId</td>
+                    <td>@vitamina.Nombre</td>
+                    <td>@vitamina.Existencia</td>
+                    <td>@vitamina.UnidadMedida</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</EditForm>
+@code{
+    public List<Vitaminas> vitaminas { get; set; } = new List<Vitaminas>();
+
+    void Buscar()
+    {
+        vitaminas = vitaminasBLL.GetList();
+    }
+}
