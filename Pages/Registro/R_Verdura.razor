@@ -18,7 +18,7 @@
              <div class="form-r ow align-items-center">
                 <div class="col">
                     <div class="form-group">
-                        <label>Verdura ID</label>
+                        <label>VerduraId</label>
                         <div class="input-group">
                             <InputNumber @bind-Value="verdura.VerduraId" class="form-control col-4" />
                             <div class="input-group-append">
@@ -55,7 +55,7 @@
                             <option selected>Seleccione</option>
                             @foreach (var vitamina in VitaminaList)
                             {
-                                        <option value="@vitamina.VitaminaId"> @vitamina.Nombre</option>
+                                <option value="@vitamina.VitaminaId"> @vitamina.Nombre</option>
                             }
                         </select>
                     </div>
@@ -92,10 +92,9 @@
             @foreach (var item in verdura.Detalle)
             {
                         <tr>
-                            <td>@item.VitaminaId</td>
-                            <td>@item.Cantidad</td>
-                            <td>@item.Descripcion</td>
-
+                        <td>@item.VitaminaId</td>
+                        <td>@item.Cantidad</td>
+                        <td>@item.Descripcion</td>
                         </tr>
             }
         </tbody>
@@ -134,21 +133,30 @@
             Buscar();
         }
     }
-    void Buscar()
+    private void Buscar()
     {
+        if (verdura.VerduraId > 0)
+        {
+            var encontrado = VerduraBLL.Buscar(verdura.VerduraId);
 
-        var encontrado = VerduraBLL.Buscar(verdura.VerduraId);
-        if (encontrado != null)
-            this.verdura = encontrado;
+            if (encontrado != null)
+                this.verdura = encontrado;
+        }
     }
-    void Nuevo()
+    public void Nuevo()
     {
-        this.verdura = new Verduras();
+        verdura = new Verduras();
 
     }
-    void Guardar()
+    public void Guardar()
     {
-        Nuevo();
+        bool guardo = VerduraBLL.Guardar(verdura);
+        if (guardo)
+        {
+            Nuevo();
+        }
+
+
     }
 
     public void AgregarDetalle()
@@ -159,11 +167,19 @@
         this.detalle = new VerdurasDetalle();
     }
 
-    void Eliminar()
+    public void Eliminar()
     {
-        Nuevo();
+        bool elimino;
+
+        elimino = VerduraBLL.Eliminar(verdura);
+
+        if (elimino)
+        {
+            Nuevo();
+
+        }
     }
-    void RemoverFila(VerdurasDetalle item)
+    public void RemoverFila(VerdurasDetalle item)
     {
         verdura.Detalle.Remove(item);
     }
