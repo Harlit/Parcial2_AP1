@@ -1,7 +1,7 @@
 @page "/Verdura"
 @page "/Verdura/{VerduraId:int}"
 
-@inject VerdurasBLL VerdurasBLL
+@inject VerduraBLL VerduraBLL
 @inject VitaminasBLL VitaminasBLL
 
 
@@ -36,18 +36,18 @@
                     aria-label="Recipient's username" aria-describedby="basic-addon2">
             </div>
         </div>
-      
+
         <label>Nombre de la Verdura</label>
         <div class="input-group input-group-lg">
             <input type="text" class="form-control" @bind-value="verdura.Nombre" aria-label="Sizing example input"
                 aria-describedby="inputGroup-sizing-lg">
         </div>
     </div>
-    
+
     <fieldset class="border-success">
         <div class="card-body">
             <div class="row">
-                
+
                 <div class="col-2">
                     <label>Vitaminas</label>
                     <div class="btn-group me-2" role="group" aria-label="Second group">
@@ -55,7 +55,7 @@
                             <option selected>Seleccione</option>
                             @foreach (var vitamina in VitaminaList)
                             {
-                                <option value="@vitamina.VitaminaId"> @vitamina.Nombre</option>
+                                        <option value="@vitamina.VitaminaId"> @vitamina.Nombre</option>
                             }
                         </select>
                     </div>
@@ -91,12 +91,12 @@
         <tbody>
             @foreach (var item in verdura.Detalle)
             {
-                <tr>
-                    <td>@item.VitaminaId</td>
-                    <td>@item.Cantidad</td>
-                    <td>@item.Descripcion</td>
+                        <tr>
+                            <td>@item.VitaminaId</td>
+                            <td>@item.Cantidad</td>
+                            <td>@item.Descripcion</td>
 
-                </tr>
+                        </tr>
             }
         </tbody>
     </table>
@@ -124,7 +124,7 @@
 
     protected override void OnInitialized()
     {
-        VitaminaList = VitaminasBLL.GetList();
+        VitaminaList = VitaminasBLL.GetList(p => true);
         verdura.VerduraId = 0;
         verdura.FechaCreacion = DateTime.Now;
 
@@ -137,7 +137,7 @@
     void Buscar()
     {
 
-        var encontrado = VerdurasBLL.Buscar(verdura.VerduraId);
+        var encontrado = VerduraBLL.Buscar(verdura.VerduraId);
         if (encontrado != null)
             this.verdura = encontrado;
     }

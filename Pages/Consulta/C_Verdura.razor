@@ -1,5 +1,5 @@
 @page "/Verduras_consulta"
-@inject VerdurasBLL verdurasBLL
+@inject VerduraBLL VerduraBLL
 
 <EditForm Model="this">
     <div class="card">
@@ -26,12 +26,12 @@
 
             @foreach (var verdura in verduras)
             {
-                <tr>
-                    <td>@verdura.VerduraId</td>
-                    <td>@verdura.Nombre</td>
-                    <td>@verdura.FechaCreacion.ToString("dd/MM/yyyy")</td>
-                    <td>@verdura.Observacion </td>
-                </tr>
+                        <tr>
+                            <td>@verdura.VerduraId</td>
+                            <td>@verdura.Nombre</td>
+                            <td>@verdura.FechaCreacion.ToString("dd/MM/yyyy")</td>
+                            <td>@verdura.Observacion </td>
+                        </tr>
             }
 
         </tbody>
@@ -43,6 +43,6 @@
 
     void Buscar()
     {
-        verduras = verdurasBLL.GetList();
+        verduras = VerduraBLL.GetList(p => true);
     }
 }

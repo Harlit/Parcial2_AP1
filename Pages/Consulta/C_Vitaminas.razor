@@ -13,7 +13,7 @@
      </div>
 
     <table>
-
+        
         <thead class="thead">
             <tr class="table">
                 <th>VitaminaId</th>
@@ -41,6 +41,6 @@
 
     void Buscar()
     {
-        vitaminas = vitaminasBLL.GetList();
+        vitaminas = vitaminasBLL.GetList(p => true);
     }
 }

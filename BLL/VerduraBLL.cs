@@ -1,105 +1,61 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Parcial2_AP1.Data;
 
-public class VerdurasBLL
+public class VerduraBLL
 {
     private Contexto IdentityDbContext;
 
-    public VerdurasBLL(Contexto contexto)
+    public VerduraBLL(Contexto contexto)
     {
         IdentityDbContext = contexto;
     }
-    public bool Existe(int Id)
-    {
-        return IdentityDbContext.Verduras.Any(c => c.VerduraId == Id);
-    }
-    public bool Guardar(Verduras verdura)
-    {
-        bool paso = false;
 
-        if (!Existe(verdura.VerduraId))
-            paso = Insertar(verdura);
-        else
-            paso = Modificar(verdura);
-        return paso;
-
+    public bool Existe(int verduraId)
+    {
+        return IdentityDbContext.Verduras.Any(o => o.VerduraId == verduraId);
     }
+
     private bool Insertar(Verduras verdura)
     {
         IdentityDbContext.Verduras.Add(verdura);
-
-        foreach (var item in verdura.Detalle)
-        {
-            var vitamina = IdentityDbContext.Vitaminas.Find(item.VitaminaId);
-            vitamina!.Existencia += item.Cantidad;
-        }
-
-        bool insertar = IdentityDbContext.SaveChanges() > 0;
-        IdentityDbContext.Entry(verdura).State = EntityState.Detached;
-        return insertar;
+        return IdentityDbContext.SaveChanges() > 0;
     }
 
     private bool Modificar(Verduras verdura)
     {
-        var anterior = IdentityDbContext.Verduras
-       .Where(c => c.VerduraId == verdura.VerduraId)
-       .Include(c => c.Detalle)
-       .AsNoTracking()
-       .SingleOrDefault();
-
-        foreach (var item in anterior!.Detalle)
-        {
-            var vitamina = IdentityDbContext.Vitaminas.Find(item.VitaminaId);
-
-            vitamina!.Existencia -= item.Cantidad;
-        }
-        IdentityDbContext.Database.ExecuteSqlRaw($"DELETE FROM VerdurasDetalle WHERE VerduraId={verdura.VerduraId};");
-
-        foreach (var item in verdura.Detalle)
-        {
-            var vitamina = IdentityDbContext.Vitaminas.Find(item.VitaminaId);
-            vitamina!.Existencia += item.Cantidad;
-
-
-            IdentityDbContext.Entry(item).State = EntityState.Added;
-        }
-
         IdentityDbContext.Entry(verdura).State = EntityState.Modified;
-
-        var guardo = IdentityDbContext.SaveChanges() > 0;
-        IdentityDbContext.Entry(verdura).State = EntityState.Detached;
-        return guardo;
+        return IdentityDbContext.SaveChanges() > 0;
     }
+
+    public bool Guardar(Verduras verdura)
+    {
+        if (!Existe(verdura.VerduraId))
+            return this.Insertar(verdura);
+        else
+            return this.Modificar(verdura);
+    }
+
     public bool Eliminar(Verduras verdura)
     {
-        IdentityDbContext.Verduras.Add(verdura);
-
-        foreach (var item in verdura.Detalle)
-        {
-            var vitamina = IdentityDbContext.Vitaminas.Find(item.VitaminaId);
-            vitamina!.Existencia -= item.Cantidad;
-
-        }
         IdentityDbContext.Entry(verdura).State = EntityState.Deleted;
-
-        bool elimino = IdentityDbContext.SaveChanges() > 0;
-        IdentityDbContext.Entry(verdura).State = EntityState.Detached;
-
-        return elimino;
+        return IdentityDbContext.SaveChanges() > 0;
     }
 
-    public Verduras? Buscar(int verdura)
+    public Verduras? Buscar(int verduraId)
     {
         return IdentityDbContext.Verduras
-        .Include(c => c.Detalle)
-        .Where(c => c.VerduraId == verdura)
-        .AsNoTracking()
-        .SingleOrDefault();
+                .Where(o => o.VerduraId == verduraId)
+                .AsNoTracking()
+                .SingleOrDefault();
+
     }
-    public List<Verduras> GetList()
+    public List<Verduras> GetList(Expression<Func<Verduras, bool>> Criterio)
     {
-        return IdentityDbContext.Verduras.AsNoTracking().ToList();
+        return IdentityDbContext.Verduras
+            .AsNoTracking()
+            .Where(Criterio)
+            .ToList();
     }
 
-    
 }
